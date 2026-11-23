@@ -1,0 +1,3 @@
+# Python packages for the kata (install torch first, see README-LOCAL.md)
+numpy
+einops
