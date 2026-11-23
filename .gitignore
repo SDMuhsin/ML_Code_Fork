@@ -36,3 +36,7 @@ Thumbs.db
 server/data/*
 !server/data/kata-progress.json
 server/tmp/
+
+# Python bytecode
+__pycache__/
+*.pyc

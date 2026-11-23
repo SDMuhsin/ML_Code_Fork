@@ -56,3 +56,7 @@ one's `after:` at the module(s) it needs in that track, or `none`.
 - 2f  What autograd saves                 after: 2e
 - 2g  The cost of a PINN step             after: 2f
 - 2i  The heat equation                   after: 2g, 2h
+- 2j  Derivatives in the forward pass      after: 2g, 2i
+- 2k  The split step                       after: 2j
+- 2l  SAGE: trace, emit, exec              after: 2k
+- 2m  Training with the accelerated step    after: 2l

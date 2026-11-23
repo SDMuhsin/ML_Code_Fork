@@ -21,6 +21,11 @@ uses it.
   before running a step.
 - `2i`: an equation with two inputs, space and time, and when a PINN is worth
   using instead of a classic solver.
+- `2j`-`2m` (about 2.5 hours): the accelerated step of the `pinn-solver-accel`
+  code. The network carries its input derivatives forward, which removes the
+  graph of a graph (`2j`). The weight backward is split in two (`2k`), and a
+  short program, SAGE, writes the residual's backward pass as code (`2l`).
+  `2m` trains a 3-output flow with it and measures each part.
 
 Each problem prints the numbers it talks about. Run the examples before you
 start the task.
@@ -41,6 +46,11 @@ week later, write each from memory. The module id says where it is taught.
 10. `2g`: sibling passes vs stacked passes, in FLOPs and memory
 11. `2i`: the heat residual `u_t - k u_xx` from two `ddx` calls on an `(N, 2)` input
 12. `2i`: when a classic solver beats a PINN, and when a PINN is worth it
+13. `2j`: the jet rules for a Linear layer and for tanh, orders 1 and 2, and `jet2d` with five channels
+14. `2j`: why nested autograd cost grows with the number of outputs and the jet's does not
+15. `2k`: the split step with `stack.backward(gradient=adj)`, and the four VJP rules
+16. `2l`: `TracedVar` with its seven operator methods, the reverse walk, `emit_backward` and the cached `build_sage`
+17. `2m`: what the jet saved and what the emitted adjoint saved, in F, A and time, and why the adjoint's eager time says nothing about its time under a compiler
 
 # Traps
 For review after the modules. Each gives a wrong answer with no error
@@ -58,3 +68,9 @@ message; the module id says where it is shown.
 10. `2f`: keeping `loss` from steps with no backward keeps every step's graph alive. Keep `loss.item()` instead.
 11. `2g`: budget for the peak, not the saved memory. The weight backward adds gradient buffers before it frees the saved values.
 12. `2i`: `g[:, 0]` has shape `(N,)`; `g[:, 0:1]` keeps `(N, 1)`. The wrong one broadcasts the residual to `(N, N)`.
+13. `2j`: without the `f''(h) * h'**2` term every second derivative stays 0, because the first layer's is 0.
+14. `2j`: the bias goes on the value channel only. Added to a derivative channel it shifts every derivative.
+15. `2k`, `2m`: a wrong factor in the adjoint (the 2, or the `1/N` seed) changes the weight of the residual against the boundary loss; Adam cancels only a change of the overall scale. In `2m-1`, seed 1 instead of `1/N` gave residual loss 4e-7, boundary loss 0.098 and a max error of 1.34 in `u` (0.07 with `1/N`).
+16. `2l`: a constant that is a numpy or torch number is written into the emitted source as `np.float64(...)` or `tensor(0.0500)`. Use Python floats.
+17. `2l`: a cache keyed without the constants returns the function for the old `nu`.
+18. `2m`: with `stack.backward(gradient=adj)` and a separate boundary loss, forgetting `bc.backward()` raises nothing. In `2m-1` it gave residual loss 2e-8, boundary loss 0.69 and a max error of 1.99 in `u`.
